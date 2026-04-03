@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ – CyberReport</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .faq-item { border-bottom: 1px solid #21262d; }
+    .faq-question {
+      cursor: pointer;
+      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #e6edf3;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .faq-question:hover { color: #4fc3f7; }
+    .faq-answer {
+      display: none;
+      padding: 0 0 18px;
+      color: #8b949e;
+      line-height: 1.8;
+      font-size: .9rem;
+    }
+    .faq-answer.open { display: block; }
+    .faq-arrow { transition: transform .3s; font-size:.8rem; color:#8b949e; }
+    .faq-arrow.rotated { transform: rotate(180deg); }
+    .faq-category {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main>
+    <section class="hero-section py-5">
+      <div class="container text-center position-relative">
+        <span class="badge px-3 py-2 mb-3" style="background:rgba(79,195,247,.1);color:#4fc3f7;border:1px solid rgba(79,195,247,.3);border-radius:20px;font-size:.8rem;">
+          FAQ
+        </span>
+        <h1 class="display-5 fw-bold mb-3">Questions fréquentes</h1>
+        <p class="lead mx-auto" style="max-width:600px;color:#8b949e;">
+          Retrouvez les réponses aux questions les plus courantes sur la cybersécurité
+          et l'utilisation de notre plateforme.
+        </p>
+        <!-- Recherche -->
+        <div class="mt-4 mx-auto" style="max-width:500px;">
+          <input type="text" id="faq-search" class="form-control"
+                 placeholder="Rechercher une question..."
+                 style="background:rgba(255,255,255,.05);border-color:rgba(79,195,247,.3);color:#e6edf3;">
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5">
+      <div class="container" style="max-width:800px;">
+
+        <!-- Reconnaître les menaces -->
+        <div class="mb-5">
+          <div class="faq-category mb-3" style="background:rgba(0,119,182,.15);color:#4fc3f7;border:1px solid rgba(79,195,247,.3);">
+            Reconnaître les menaces
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Comment reconnaître un email de phishing ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Un email de phishing présente généralement plusieurs signes caractéristiques :</p>
+              <ul>
+                <li><strong>Adresse expéditeur suspecte</strong> : le domaine ne correspond pas à l'organisation supposée (ex: support@micr0soft.com au lieu de @microsoft.com)</li>
+                <li><strong>Urgence excessive</strong> : "Votre compte sera suspendu dans 24h", "Action requise immédiatement"</li>
+                <li><strong>Liens suspects</strong> : survolez le lien sans cliquer pour voir l'URL réelle. Si elle semble strange, ne cliquez pas.</li>
+                <li><strong>Fautes d'orthographe</strong> : les emails frauduleux contiennent souvent des erreurs grammaticales</li>
+                <li><strong>Demande d'informations sensibles</strong> : mot de passe, numéro de carte bancaire, données personnelles</li>
+                <li><strong>Pièce jointe inattendue</strong> : .exe, .zip, .doc avec macros activées</li>
+              </ul>
+              <p><strong>En cas de doute, ne cliquez sur rien et signalez immédiatement l'email.</strong></p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Comment savoir si mon ordinateur est infecté par un virus ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Voici les signes qui peuvent indiquer une infection par un malware ou virus :</p>
+              <ul>
+                <li>Ralentissement inhabituel de l'ordinateur</li>
+                <li>Programmes qui se lancent ou se ferment automatiquement</li>
+                <li>Apparition de pop-ups publicitaires même sans navigateur ouvert</li>
+                <li>Fichiers modifiés, renommés ou inaccessibles</li>
+                <li>Activité réseau excessive (voyant réseau clignotant sans raison)</li>
+                <li>Antivirus désactivé ou impossible à ouvrir</li>
+                <li>Messages d'erreur inhabituels ou écrans bleus fréquents</li>
+                <li>Votre messagerie envoie des emails à votre insu</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Qu'est-ce qu'un ransomware ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Un ransomware (ou rançongiciel) est un type de malware qui chiffre vos fichiers et exige une rançon pour les déchiffrer. C'est l'une des menaces les plus dévastatrices actuellement.</p>
+              <p><strong>Comment s'en protéger :</strong></p>
+              <ul>
+                <li>Mettre à jour régulièrement le système et les logiciels</li>
+                <li>Ne jamais ouvrir les pièces jointes suspectes</li>
+                <li>Effectuer des sauvegardes régulières sur un support déconnecté</li>
+                <li>Utiliser un antivirus à jour</li>
+              </ul>
+              <p><strong>Si vous êtes victime :</strong> déconnectez immédiatement votre ordinateur du réseau et signalez l'incident. Ne payez jamais la rançon.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Que faire -->
+        <div class="mb-5">
+          <div class="faq-category mb-3" style="background:rgba(253,126,20,.15);color:#fd7e14;border:1px solid rgba(253,126,20,.3);">
+            Que faire en cas d'incident
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Que faire si mon ordinateur est infecté ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p><strong>En cas de suspicion d'infection, agissez méthodiquement :</strong></p>
+              <ol>
+                <li><strong>Déconnectez</strong> immédiatement le câble réseau et désactivez le Wi-Fi pour éviter la propagation</li>
+                <li><strong>Ne redémarrez pas</strong> l'ordinateur (certains malwares se déclenchent au redémarrage)</li>
+                <li><strong>Signalez</strong> l'incident immédiatement via notre formulaire en ligne</li>
+                <li><strong>Attendez</strong> les instructions de l'équipe de sécurité</li>
+                <li><strong>Ne tentez pas</strong> de supprimer le malware vous-même, vous pourriez effacer des preuves</li>
+                <li><strong>Notez</strong> l'heure exacte de découverte et ce que vous avez fait juste avant</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              J'ai cliqué sur un lien suspect, que dois-je faire ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Ne paniquez pas, mais agissez rapidement :</p>
+              <ol>
+                <li>Déconnectez-vous d'Internet immédiatement</li>
+                <li>Si vous avez entré des identifiants, changez-les depuis un autre appareil</li>
+                <li>Si vous avez entré des informations bancaires, contactez votre banque</li>
+                <li>Signalez l'incident via notre plateforme en joignant une capture d'écran si possible</li>
+                <li>Lancez un scan antivirus complet</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Quelqu'un accède à mon compte sans mon autorisation, que faire ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <ol>
+                <li><strong>Changez immédiatement</strong> votre mot de passe depuis un appareil sûr</li>
+                <li><strong>Activez l'authentification à deux facteurs</strong> si ce n'est pas déjà fait</li>
+                <li><strong>Vérifiez</strong> les sessions actives et déconnectez les appareils inconnus</li>
+                <li><strong>Signalez l'incident</strong> en choisissant "Accès non autorisé" avec le niveau de gravité "Critique"</li>
+                <li><strong>Contactez votre responsable</strong> si le compte compromis est professionnel</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Utiliser la plateforme -->
+        <div class="mb-5">
+          <div class="faq-category mb-3" style="background:rgba(40,167,69,.15);color:#28a745;border:1px solid rgba(40,167,69,.3);">
+            Utiliser CyberReport
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Quand dois-je signaler un incident ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Vous devez signaler un incident dès que vous constatez ou suspectez :</p>
+              <ul>
+                <li>Un email de phishing reçu (même si vous n'avez pas cliqué)</li>
+                <li>Un comportement anormal de votre ordinateur</li>
+                <li>Une tentative d'accès non autorisé à votre compte</li>
+                <li>Une perte ou un vol d'équipement informatique</li>
+                <li>Une fuite potentielle de données confidentielles</li>
+                <li>Un logiciel ou site web suspect</li>
+                <li>Tout problème réseau inexpliqué</li>
+              </ul>
+              <p><strong>Principe clé : en cas de doute, signalez toujours. Il vaut mieux un faux positif qu'un incident ignoré.</strong></p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Comment suivre l'état de mon signalement ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Après votre signalement, vous recevez par email un numéro de ticket (ex: INC-2026-0001). Pour suivre votre incident :</p>
+              <ol>
+                <li>Rendez-vous sur la page <a href="/suivi">Suivi d'incident</a></li>
+                <li>Saisissez votre adresse email et votre numéro de ticket</li>
+                <li>Le statut actuel s'affichera : Nouveau, En cours, En attente, Résolu ou Fermé</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Quel niveau de gravité choisir ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Voici un guide pour choisir le bon niveau de gravité :</p>
+              <ul>
+                <li><strong style="color:#28a745;">Faible</strong> : Problème mineur sans impact sur la sécurité (bug logiciel sans données sensibles, lenteur inexpliquée)</li>
+                <li><strong style="color:#fd7e14;">Moyen</strong> : Incident modéré pouvant compromettre des données ou des services (email de phishing reçu, comportement suspect)</li>
+                <li><strong style="color:#dc3545;">Élevé</strong> : Incident sérieux avec impact confirmé (accès non autorisé détecté, données potentiellement compromises)</li>
+                <li><strong style="color:#7b0000;">Critique</strong> : Incident majeur avec impact immédiat et étendu (ransomware actif, fuite massive de données, service critique indisponible)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="faq-item" data-faq>
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Mes données personnelles sont-elles protégées ?
+              <i class="fas fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Oui. Les informations que vous saisissez dans le formulaire de signalement sont :</p>
+              <ul>
+                <li>Stockées de manière sécurisée dans notre base de données</li>
+                <li>Accessibles uniquement aux administrateurs habilités</li>
+                <li>Utilisées uniquement dans le cadre du traitement de votre incident</li>
+                <li>Conservées conformément à notre politique de rétention des données</li>
+              </ul>
+              <p>Conformément au RGPD, vous avez le droit d'accéder, de rectifier ou de supprimer vos données.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-4 text-center" style="background:rgba(255,255,255,.02);">
+      <div class="container">
+        <p style="color:#8b949e;" class="mb-3">Vous n'avez pas trouvé réponse à votre question ?</p>
+        <a href="/signaler" class="btn btn-cr-primary">
+          <i class="fas fa-paper-plane me-2"></i>Signaler un incident directement
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/nav.js"></script>
+  <script>
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const arrow = el.querySelector('.faq-arrow');
+      const isOpen = answer.classList.contains('open');
+      // Ferme tous
+      document.querySelectorAll('.faq-answer.open').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-arrow.rotated').forEach(a => a.classList.remove('rotated'));
+      if (!isOpen) {
+        answer.classList.add('open');
+        arrow.classList.add('rotated');
+      }
+    }
+
+    // Recherche dans la FAQ
+    document.getElementById('faq-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('[data-faq]').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) || !q ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
