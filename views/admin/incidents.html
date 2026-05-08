@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des incidents – CyberReport Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    body { background: transparent; }
+
+    .filter-bar {
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    .filter-select, .filter-input {
+      background: rgba(5,12,23,.88);
+      border: 1px solid rgba(148,163,184,.16);
+      color: #e8eef7;
+      border-radius: 14px;
+      font-size: .88rem;
+      padding: 10px 12px;
+      min-height: 46px;
+    }
+
+    .filter-select:focus, .filter-input:focus {
+      border-color: rgba(103,232,249,.45);
+      outline: none;
+      color: #fff;
+      background: rgba(5,12,23,.94);
+      box-shadow: 0 0 0 4px rgba(14,165,233,.14);
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .sort-th {
+      cursor: pointer;
+      user-select: none;
+      transition: color .2s ease;
+    }
+
+    .sort-th:hover {
+      color: #9be5ff;
+    }
+
+    .page-head {
+      background: linear-gradient(135deg, rgba(14,165,233,.12), rgba(255,255,255,.02));
+      border: 1px solid rgba(103,232,249,.12);
+      border-radius: 22px;
+      padding: 24px 26px;
+      margin-bottom: 18px;
+    }
+
+    .incident-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .delete-ticket-btn {
+      background: rgba(239,68,68,.12);
+      color: #fecaca;
+      border: 1px solid rgba(239,68,68,.22);
+      font-size: .75rem;
+      border-radius: 12px;
+      padding: .45rem .7rem;
+      line-height: 1;
+      transition: all .2s ease;
+    }
+
+    .delete-ticket-btn:hover {
+      background: rgba(239,68,68,.20);
+      color: #fff;
+      border-color: rgba(239,68,68,.35);
+    }
+  </style>
+</head>
+<body class="admin-page">
+  <div id="admin-navbar"></div>
+
+  <div class="container-fluid px-4 py-4">
+
+    <div class="page-head d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <h4 class="fw-bold mb-0">Gestion des incidents</h4>
+        <p style="color:#8b949e;font-size:.85rem;margin:0;">
+          <span id="result-count">–</span> incident(s) trouvé(s)
+        </p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button id="export-incidents-btn" type="button" class="btn btn-sm btn-cr-primary px-3">
+          <i class="fas fa-file-excel me-2"></i>Exporter Excel
+        </button>
+        <a href="/admin/dashboard" class="btn btn-sm btn-cr-outline px-3">
+          <i class="fas fa-arrow-left me-1"></i>Tableau de bord
+        </a>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-4">
+          <input type="text" id="filter-search" class="filter-input w-100"
+                 placeholder="Rechercher (ticket, nom, email)...">
+        </div>
+        <div class="col-6 col-md-2">
+          <select id="filter-type" class="filter-select w-100">
+            <option value="">Tous les types</option>
+            <option>Phishing</option>
+            <option>Virus / Malware</option>
+            <option>Problème réseau</option>
+            <option>Bug logiciel</option>
+            <option>Accès non autorisé</option>
+            <option>Panne matérielle</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <select id="filter-gravite" class="filter-select w-100">
+            <option value="">Toutes gravités</option>
+            <option>Faible</option>
+            <option>Moyen</option>
+            <option>Élevé</option>
+            <option>Critique</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <select id="filter-statut" class="filter-select w-100">
+            <option value="">Tous statuts</option>
+            <option>Nouveau</option>
+            <option>En cours</option>
+            <option>En attente</option>
+            <option>Résolu</option>
+            <option>Fermé</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <button type="button" id="reset-filters-btn" class="btn btn-sm w-100"
+                  style="background:rgba(239,68,68,.12);color:#fecaca;border:1px solid rgba(239,68,68,.22);font-size:.85rem;border-radius:14px;">
+            <i class="fas fa-times me-1"></i>Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="table table-cr mb-0">
+          <thead>
+            <tr>
+              <th class="sort-th ps-3" onclick="sortBy('ticket_number')">
+                Ticket <span id="sort-ticket_number"></span>
+              </th>
+              <th>Déclarant</th>
+              <th class="sort-th" onclick="sortBy('type_incident')">
+                Type <span id="sort-type_incident"></span>
+              </th>
+              <th class="sort-th" onclick="sortBy('gravite')">
+                Gravité <span id="sort-gravite"></span>
+              </th>
+              <th class="sort-th" onclick="sortBy('statut')">
+                Statut <span id="sort-statut"></span>
+              </th>
+              <th class="sort-th" onclick="sortBy('date_creation')">
+                Date <span id="sort-date_creation">▼</span>
+              </th>
+              <th class="pe-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="incidents-tbody">
+            <tr>
+              <td colspan="7" class="text-center py-4" style="color:#8b949e;">
+                <span class="cr-spinner me-2"></span>Chargement...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between px-3 py-2"
+           style="border-top:1px solid #21262d;">
+        <div style="font-size:.8rem;color:#8b949e;" id="pagination-info"></div>
+        <nav>
+          <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/admin-nav.js"></script>
+  <script>
+    const GRAVITE_BADGE = {
+      'Faible': 'badge-faible',
+      'Moyen': 'badge-moyen',
+      'Élevé': 'badge-eleve',
+      'Critique': 'badge-critique'
+    };
+
+    const STATUT_BADGE = {
+      'Nouveau': 'badge-nouveau',
+      'En cours': 'badge-en-cours',
+      'En attente': 'badge-en-attente',
+      'Résolu': 'badge-resolu',
+      'Fermé': 'badge-ferme'
+    };
+
+    let state = {
+      page: 1,
+      limit: 15,
+      sort: 'date_creation',
+      order: 'DESC',
+      search: '',
+      type: '',
+      gravite: '',
+      statut: ''
+    };
+
+    let searchTimer;
+
+    async function loadIncidents() {
+      const params = new URLSearchParams({
+        page: state.page,
+        limit: state.limit,
+        sort: state.sort,
+        order: state.order,
+        ...(state.search && { search: state.search }),
+        ...(state.type && { type: state.type }),
+        ...(state.gravite && { gravite: state.gravite }),
+        ...(state.statut && { statut: state.statut })
+      });
+
+      const res = await fetch('/admin/api/incidents?' + params.toString());
+      if (!res.ok) {
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const d = await res.json();
+      renderTable(d.incidents || []);
+      renderPagination(d.total || 0, d.totalPages || 1);
+      document.getElementById('result-count').textContent = d.total || 0;
+    }
+
+    function renderTable(incidents) {
+      const tbody = document.getElementById('incidents-tbody');
+
+      if (!incidents.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-4" style="color:#8b949e;">
+              Aucun incident trouvé avec ces critères.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = incidents.map(inc => `
+        <tr>
+          <td class="ps-3">
+            <code style="color:#4fc3f7;font-size:.8rem;">${inc.ticket_number}</code>
+          </td>
+          <td>
+            <div style="font-size:.875rem;font-weight:600;">${inc.prenom} ${inc.nom}</div>
+            <div style="font-size:.74rem;color:#8fa0b8;">${inc.titre_incident || 'Incident'}</div>
+            <div style="font-size:.75rem;color:#8b949e;">${inc.email}</div>
+          </td>
+          <td style="font-size:.85rem;color:#8b949e;">${inc.type_incident}</td>
+          <td>
+            <span class="badge ${GRAVITE_BADGE[inc.gravite] || 'bg-secondary'} ${inc.gravite === 'Critique' ? 'pulse-critical' : ''}">
+              ${inc.gravite}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${STATUT_BADGE[inc.statut] || 'bg-secondary'}">${inc.statut}</span>
+          </td>
+          <td style="font-size:.8rem;color:#8b949e;">
+            ${new Date(inc.date_creation).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' })}
+          </td>
+          <td class="pe-3">
+            <div class="incident-actions">
+              <a href="/admin/incidents/${inc.id}"
+                 class="btn btn-sm btn-cr-outline px-3 py-2"
+                 style="font-size:.75rem;">
+                <i class="fas fa-eye me-1"></i>Détail
+              </a>
+
+              <button type="button"
+                      class="btn btn-sm delete-ticket-btn"
+                      data-id="${inc.id}"
+                      data-ticket="${inc.ticket_number}"
+                      title="Supprimer le ticket">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPagination(total, totalPages) {
+      const start = (state.page - 1) * state.limit + 1;
+      const end = Math.min(state.page * state.limit, total);
+
+      document.getElementById('pagination-info').textContent =
+        total ? `${start}–${end} sur ${total}` : '';
+
+      const ul = document.getElementById('pagination');
+
+      let html = `
+        <li class="page-item ${state.page <= 1 ? 'disabled' : ''}">
+          <a class="page-link" onclick="goPage(${state.page - 1}); return false;" href="#">‹</a>
+        </li>`;
+
+      const range = 2;
+      for (let p = Math.max(1, state.page - range); p <= Math.min(totalPages, state.page + range); p++) {
+        html += `
+          <li class="page-item ${p === state.page ? 'active' : ''}">
+            <a class="page-link" onclick="goPage(${p}); return false;" href="#">${p}</a>
+          </li>`;
+      }
+
+      html += `
+        <li class="page-item ${state.page >= totalPages ? 'disabled' : ''}">
+          <a class="page-link" onclick="goPage(${state.page + 1}); return false;" href="#">›</a>
+        </li>`;
+
+      ul.innerHTML = html;
+    }
+
+    function goPage(p) {
+      if (p < 1) return;
+      state.page = p;
+      loadIncidents();
+    }
+
+    function sortBy(col) {
+      if (state.sort === col) {
+        state.order = state.order === 'ASC' ? 'DESC' : 'ASC';
+      } else {
+        state.sort = col;
+        state.order = 'DESC';
+      }
+
+      document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+      document.getElementById('sort-' + col).textContent = state.order === 'ASC' ? '▲' : '▼';
+      state.page = 1;
+      loadIncidents();
+    }
+
+    document.getElementById('filter-search').addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        state.search = this.value;
+        state.page = 1;
+        loadIncidents();
+      }, 350);
+    });
+
+    ['filter-type', 'filter-gravite', 'filter-statut'].forEach(id => {
+      document.getElementById(id).addEventListener('change', function() {
+        state[id.replace('filter-', '')] = this.value;
+        state.page = 1;
+        loadIncidents();
+      });
+    });
+
+    function resetFilters() {
+      state = {
+        ...state,
+        page: 1,
+        sort: 'date_creation',
+        order: 'DESC',
+        search: '',
+        type: '',
+        gravite: '',
+        statut: ''
+      };
+
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-type').value = '';
+      document.getElementById('filter-gravite').value = '';
+      document.getElementById('filter-statut').value = '';
+
+      document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+      document.getElementById('sort-date_creation').textContent = '▼';
+
+      loadIncidents();
+    }
+
+    async function deleteIncident(id, ticketNumber) {
+      const ok = confirm(`Supprimer le ticket ${ticketNumber} ? Cette action est irréversible.`);
+      if (!ok) return;
+
+      try {
+        const res = await fetch(`/admin/api/incidents/${id}`, {
+          method: 'DELETE'
+        });
+
+        const payload = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          alert(payload.message || 'Erreur lors de la suppression du ticket.');
+          return;
+        }
+
+        loadIncidents();
+      } catch (e) {
+        alert('Erreur serveur lors de la suppression.');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.delete-ticket-btn');
+      if (!btn) return;
+      deleteIncident(btn.dataset.id, btn.dataset.ticket);
+    });
+
+    document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
+
+    document.getElementById('export-incidents-btn').addEventListener('click', function() {
+      const params = new URLSearchParams({
+        sort: state.sort,
+        order: state.order,
+        ...(state.search && { search: state.search }),
+        ...(state.type && { type: state.type }),
+        ...(state.gravite && { gravite: state.gravite }),
+        ...(state.statut && { statut: state.statut })
+      });
+
+      window.location.href = '/admin/api/incidents/export?' + params.toString();
+    });
+
+    loadIncidents();
+  </script>
+</body>
+</html>
